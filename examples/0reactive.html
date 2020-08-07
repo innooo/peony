@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <button id="btn">更新</button>
+</body>
+<script>
+  let uid = 0;
+
+  class Dep {
+    constructor() {
+      this.id = ++uid;
+      this.subs = [];
+    }
+    addSub(target) { // 将target添加进观察者列表
+      this.subs.push(target);
+    }
+    depend() { // 
+      if (Dep.target) {
+        Dep.target.addDep(this);
+      }
+    }
+    removeSub(target) {
+      this.subs.splice(this.subs.findIndex(_ => _.id == target.id), 1);
+    }
+    notify() {
+      const subs = this.subs.slice();
+      for (let i = 0; i < subs.length; i++) {
+        subs[i].update();
+      }
+    }
+  }
+
+  Dep.target = null; // 当前处于激活状态的watcher
+  const targetStack = []; // 存放watcher的栈
+
+  const pushTarget = target => { // 更新当前激活的Dep.target
+    if (Dep.target) {
+      targetStack.push(target); // 将target（watcher）压入栈中
+    }
+    Dep.target = target;
+  };
+
+  const popTarget = () => { // 从watcher栈中弹出顶部watcher
+    Dep.target = targetStack.pop();
+  };
+
+  class Watcher {
+    constructor(getter, options = {}) {
+      this.deps = []; // 依赖列表
+      this.newDeps = []; // 最近一次添加的依赖列表
+      this.depIds = new Set(); // 依赖ids列表
+      this.newDepIds = new Set(); // 最近一次添加的依赖ids列表
+      this.getter = getter; // 
+      this.lazy = !!options.lazy; // 懒依赖，在首次实例化的时候不执行getter
+      this.dirty = this.lazy; // 脏值标识，主要用在computed计算时；
+      this.lazy ? undefined : this.get();
+    }
+    get() {
+      pushTarget(this); // 将当前watcher作为激活的watcher对象，并推入targetStack栈中
+      const value = this.getter();
+      popTarget(); // 将当前watcher置为栈中上一个watcher
+      this.cleanupDeps(); // 依赖整理，主要用来整理this.deps、this.depIds
+      return value;
+    }
+    addDep(dep) {
+      if (!this.newDepIds.has(dep.id)) {
+        this.newDepIds.add(dep.id);
+        this.newDeps.push(dep);
+        if (!this.depIds.has(dep.id)) {
+          dep.addSub(this);
+        }
+      }
+    }
+    cleanupDeps() {
+      let i = this.deps.length;
+      while (i--) {
+        const dep = this.deps[i];
+        if (!this.newDepIds.has(dep.id)) { // 如果新的依赖列表中不再包含之前的依赖项，则调用dep.removeSub方法，将当前watcher从dep.subs列表中移除
+          dep.removeSub(this);
+        }
+      }
+      [this.deps, this.newDeps] = [this.newDeps, this.deps];
+      this.newDeps.length = 0;
+      [this.depIds, this.newDepIds] = [this.newDepIds, this.depIds];
+      this.newDepIds.clear();
+    }
+    evaluate() {
+      this.value = this.get();
+      this.dirty = false;
+    }
+    update() {
+      if (this.lazy) {
+        this.dirty = true;
+      } else {
+        new Promise((resolve) => {
+          resolve();
+        }).then(() => {
+          this.get();
+        });
+      }
+    }
+    depend() { // 将当前watcher的依赖添加到当前Dep.target的依赖列表中
+      const deps = this.deps;
+      for (let i = 0; i < deps.length; i++) {
+        deps[i].depend();
+      }
+    }
+  }
+
+  const defineReactive = (target, key, val) => {
+    const dep = new Dep(); // 这里实例化dep对象，用于在getter/setter触发的时候访问该对象进行依赖收集等操作，本质上来说当前实例化的dep和当前的data[key]一一对应了
+    Object.defineProperty(target, key, {
+      enumerable: true,
+      configurable: true,
+      get() {
+        if (Dep.target) {
+          dep.depend(); // 依赖添加
+        }
+        return val;
+      },
+      set(newVal) {
+        if (val === newVal) return;
+        val = newVal;
+        dep.notify();
+      },
+    });
+  };
+
+  document.querySelector('#btn').addEventListener('click', () => {
+    vm.current *= 2;
+  });
+
+  const vm = {
+    data: {
+      current: 1,
+    },
+    computed: {
+      computedCurrent() {
+        return this.current * 2 + 'xx';
+      }
+    },
+  };
+
+  const initData = data => {
+    const keys = Object.keys(data);
+    for (let i = 0; i < keys.length; i++) {
+      defineReactive(vm, keys[i], data[keys[i]]);
+    }
+  };
+
+  const initComputed = computed => {
+    const keys = Object.keys(computed);
+    for (let i = 0; i < keys.length; i++) {
+      const userDef = computed[keys[i]].bind(vm);
+      const watcher = new Watcher(userDef, { lazy: true });
+
+      Object.defineProperty(vm, keys[i], {
+        enumerable: true,
+        configurable: true,
+        get() {
+          if (watcher) {
+            if (watcher.dirty) {
+              watcher.evaluate();
+            }
+            if (Dep.target) {
+              watcher.depend();
+            }
+            return watcher.value;
+          }
+        },
+      });
+    }
+  };
+  
+  const data = initData(vm.data);
+
+  const computed = initComputed(vm.computed);
+
+  const updateComponent = () => {
+    const app = document.querySelector('#app');
+    var a = vm.current; // 引用vm.current
+    var b = vm.computedCurrent; // 应用computed
+    app.innerHTML = `data: <i>${a}</i> computed: <strong>${b}</strong>`;
+  };
+
+  defineReactive(vm, 'current', vm.current); // 为vm.current定义getter/setter
+  const watcher = new Watcher(updateComponent);
+</script>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createComponent</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <span @click="handleClick">{{msg}}</span>
+  </div>
+  <script>
+    const click = {
+      methods: {
+        handleClick () {
+          this.msg += 1
+        }
+      }
+    }
+    var app = new Vue({
+      el: '#app',
+      data () {
+        return {
+          msg: 1
+        }
+      },
+      mixins: [click]
+    })
+
+  </script>
+</body>
+<script>
+  // 原理
+  // Vue.prototype._init 中 mergeOptions 的时候会将mixins中的内容merge到vm.$options中
+</script>
+
+</html>

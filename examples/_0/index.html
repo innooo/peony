@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createComponent</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script>
+    new Vue({
+      el: '#app',
+      template: `
+      <div>
+        <span>count: {{count}}</span> <br />
+        <span>multiple: {{multiple}}</span> <br />
+        <button @click="handleClick">count + 1</button> <br />
+      </div>
+      `,
+      data() {
+        return {
+          count: 1,
+        }
+      },
+      computed: {
+        multiple() {
+          return this.count * 2
+        }
+      },
+      methods: {
+        handleClick() {
+          this.count += 1;
+        },
+      }
+    })
+  </script>
+</body>
+
+</html>

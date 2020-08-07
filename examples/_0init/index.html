@@ -1,0 +1,56 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+    div {
+        width: 500px;
+        height: 300px;
+        background: orange;
+    }
+</style>
+</head>
+<body>
+    <div id="div"></div>
+    <button id="btn">取消debounce</button>
+</body>
+<script>
+    const div = document.getElementById('div')
+const btn = document.getElementById('btn')
+
+const debounce = (fn, wait, immediate = false) => {
+      let timer
+      const debounced = function () {
+        if (timer) clearTimeout(timer)
+        if (immediate) {
+          const trigger = !timer
+          timer = setTimeout(() => {
+            timer = null
+          }, wait)
+
+          if (trigger) {
+            fn.apply(this, arguments)
+          }
+          return
+        }
+
+        timer = setTimeout(() => {
+          fn.apply(this, arguments)
+        }, wait)
+        return
+  }
+    
+      debounced.cancel = () => {
+        clearTimeout(timer)
+        timer = null
+      }
+      return debounced
+}
+
+const fn = debounce((e) => {
+      console.log('move', e)
+}, 2000, true)
+
+    div.addEventListener('mousemove', fn)
+btn.addEventListener('click', fn.cancel)
+</script>
+</html>

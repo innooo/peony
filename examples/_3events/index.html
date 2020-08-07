@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createComponent</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <span id="app" @click="handleClick">递增</span>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      methods: {
+        handleClick() {
+          console.log('click')
+        }
+      }
+    })
+  </script>
+</body>
+<script>
+  function anonymous() {
+    with (this) {
+      return _c(
+        'div',
+        { attrs: { "id": "app" } },
+        [
+          _c(
+            'button',
+            {
+              on: { "click": handleClick }
+            },
+            [_v("递增")]
+          )
+        ]
+      )
+    }
+  }
+</script>
+
+</html>

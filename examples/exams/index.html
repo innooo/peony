@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>exam</title>
+    <script src="../../dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="demo">{{message}}</div>
+    <script>
+      var demo = new Vue({
+        data() {
+          return {
+            message: 'aaa'
+          }
+        }
+      })
+      demo.$mount('#demo')
+    </script>
+  </body>
+</html>

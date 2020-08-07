@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createComponent</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script>
+    Vue.component('demo1', {
+      template: `
+        <div>
+          匿名插槽
+          <slot></slot>
+        </div>
+      `
+    })
+
+    Vue.component('demo2', {
+      template: `
+        <div>
+          匿名插槽
+          <slot></slot>
+          具名插槽
+          <slot name="demo2_slot"></slot>
+        </div>
+      `
+    })
+
+    Vue.component('demo3', {
+      template: `
+        <div>
+          作用域slot:
+          <ul>
+            <li v-for="item in l" :key="item.id">
+              <slot name="demo3_slot" :i="item"></slot>
+            </li>
+          </ul>
+        </div>
+      `,
+      props: ['l']
+    })
+
+    // 匿名slot
+    // const app = new Vue({
+    //   template: `
+    //     <demo1>
+    //       <strong>这里是匿名插槽的内容</strong>
+    //     </demo1>
+    //   `,
+    //   el: '#app'
+    // })
+
+    // 具名slot
+    // const app = new Vue({
+    //   template: `
+    //     <demo2>
+    //       <strong>这里是匿名插槽的内容</strong>
+    //       <em slot="demo2_slot">这里是具名插槽的内容</em>
+    //     </demo2>
+    //   `,
+    //   el: '#app'
+    // })
+
+    // 作用域slot
+    const app = new Vue({
+      template: `
+        <demo3 :l="list">
+          <strong>这里是作用域插槽的内容</strong>
+          <em slot="demo3_slot" slot-scope="a"><span>{{a.i.text}}</span></em>
+        </demo3>
+      `,
+      data() {
+        return {
+          list: [{ id: 1, text: '第一项' }, { id: 2, text: '第二项' }]
+        }
+      },
+      el: '#app'
+    })
+
+  </script>
+</body>
+<script>
+  ƒunction anonymous() {
+    with (this) {
+      return _c('div', [_v("\n 作用域slot:\n "), _c('ul', _l((l),
+        function (item) {
+          return _c('li', { key: item.id }, [_t("demo3_slot", null, { i: item })], 2)
+        }))]
+      )
+    }
+  }
+</script>
+
+</html>

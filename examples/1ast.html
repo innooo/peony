@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ast</title>
+  <!-- <script src="../dist/vue.js"></script> -->
+</head>
+
+<body>
+  <div id="app">
+    <input type="text" v-model="model" placeholder="model" />
+    <input type="text" v-bind="bind" placeholder="bind" />
+    <ul>
+      <li v-for="i in list" :key="i">{{i}}</li>
+    </ul>
+    <strong v-if="vif">if</strong>
+    <em v-show="show">show</em>
+    <p ref="ref">ref</p>
+    <button @click="handleClick">@click</button>
+  </div>
+</body>
+<script>
+  // const app = new Vue({
+  //   el: '#app',
+  //   data: {
+  //     model: '', // v-model
+  //     bind: '', // v-bind
+  //     list: ['a', 'b', 'c'], // v-for
+  //     vif: true, // v-if
+  //     show: true, // v-show
+  //   },
+  //   methods: {
+  //     handleClick() {
+  //       console.log('click');
+  //     }
+  //   },
+  // });
+
+  // 正则
+  const comment = /^<!--/; // 匹配注释
+  const endTag = /^<\/((?:[a-zA-Z_][\w\-\.]*\:)?[a-zA-Z_][\w\-\.]*)[^>]*>/; // 匹配结束标签，例如</div>
+  const startTag = /^<((?:[a-zA-Z_][\w\-\.]*\:)?[a-zA-Z_][\w\-\.]*)/; // 匹配开始标签
+  const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/; // 匹配属性
+  const startTagClose = /^\s*(\/?)>/; // 匹配标签的结束，匹配这样的：<input /> div>
+
+  const preTransform = ele => { // 处理input类型的标签
+    if (ele.tag === 'input') {
+      return ele;
+    }
+  };
+
+  const processFor = ele => {};
+  const processIf = ele => {};
+  const processOnce = ele => {};
+
+  const baseOption = {
+    start(tagName, attrs, start, end) {
+      let element = {
+        attrsList: attrs,
+        attrsMap: attrs.reduce((curr, prev) => ({ ...prev, [curr.name]: curr.value }), {}), // [{name: 'id', value: 'app'}] --> {id: 'app'}
+        children: [],
+        parent: currentParent,
+        tag: tagName,
+        type: 1,
+      };
+      element = preTransform(element);
+      processFor(element); // 处理v-for
+      processIf(element); // 处理v-if
+      processOnce(element); // 处理v-once
+      processElement(element);
+    }
+  };
+
+  const parseHTML = (html, option) => {
+    let index = 0;
+    let root; // parse结果
+    let currentParent; // parse过程中当前的父节点
+    const options = { ...option, ...baseOption };
+    const advance = n => { // 向前移动n位
+      index += n;
+      html.substring(n);
+    };
+    const parseEndTag = () => { };
+    const parseStartTag = matched => {
+      let match;
+      if (matched) {
+        match = {
+          tagName: matched[1],
+          attrs: [],
+          start: index,
+        };
+        advance(matched[0].length); // html模板向前移动匹配成功的字符长度
+        let end, attr;
+        if (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) { // 匹配当前标签的attr，并将其收集至match.attrs列表中
+          advance(attr[0].length);
+          match.attrs.push(attr);
+        }
+        if (end) {
+          advance(end[0].length);
+          match.end = index;
+        }
+        match.attrs = match.attrs.map(_ => ({
+          name: _[1],
+          value: _[3] || _[4] || _[5] || '',
+        }));
+
+        if (options.start) {
+          options.start(match.tagName, match.attrs, match.start, match.end);
+        }
+      }
+    };
+
+    while (html) {
+      let textEnd = html.indexOf('<');
+      if (textEnd === 0) {
+        // 匹配注释
+        if (comment.test(html)) {
+          const commentEnd = html.indexOf('-->');
+          if (commentEnd > 0) {
+            advance(commentEnd);
+            continue;
+          }
+        }
+
+        // 匹配结束标签
+        const endTagMatch = html.match(endTag);
+        if (endTagMatch) {
+          parseEndTag(endTagMatch);
+          continue;
+        }
+
+        // 匹配开始标签
+        const startTagMatch = html.match(startTag);
+        if (startTagMatch) {
+          parseStartTag(startTagMatch);
+          continue;
+        }
+      }
+
+
+
+    }
+
+  };
+
+  // 使用
+  const template = document.querySelector('#app').outerHTML;
+  parseHTML(template, {});
+</script>
+
+</html>

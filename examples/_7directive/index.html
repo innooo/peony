@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>slots & scopedSlots</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <p v-scroll="scroll" style="height: 1000px; background: #f5f5f5"></p>
+  </div>
+  <script>
+    /* ignore eslint */
+    Vue.directive('scroll', {
+      bind: (el, binding) => {
+        window.addEventListener('scroll', () => {
+          binding.value()
+        })
+      }
+    })
+    const app = new Vue({
+      el: '#app',
+      data () {
+        return {
+          msg: 1
+        }
+      },
+      methods: {
+        scroll () {
+          console.log('ssss')
+        }
+      }
+    })
+
+  </script>
+</body>
+<script>
+  // 原理
+  // Vue.directive 将自定义指令放入Vue.options.directives 数组中，
+  // 在ast编译阶段 通过addDirective 方法处理directive，将directive指令的name等信息添加到对应节点el的directives[] 列表中
+  // 再patch阶段执行updateDirectives方法，比较新旧vnode的directives并更新执行新的directives
+</script>
+
+</html>

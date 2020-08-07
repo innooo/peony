@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>initVue</title>
+  <script src="../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    data_1: {{data_1}} <button @click="handleClick1">change data_1</button>
+    computed_1: {{computed_1}}
+    <hr />
+    data_2: {{data_2}} <button @click="handleClick2">change data_2</button>
+    computed_2 immediate: <input type="text" v-model="computed_2">
+    <hr />
+    data_3: {{data_3.a}} <button @click="handleClick3">change data_3</button>
+    computed_3 immediate: {{computed_3}}
+    <hr />
+    data: {{data}} <button @click="handleClick">change data</button>
+    computed: {{compute}}
+  </div>
+  <script>
+    var app = new Vue({
+      beforeCreate() {
+
+      },
+      created() {
+
+      },
+      beforeMount() {
+
+      },
+      mounted: () => {
+
+      },
+      beforeUpdate() {
+
+      },
+      updated() {
+
+      },
+      beforeDestroy() {
+
+      },
+      destroyed() {
+
+      },
+      methods: {
+        handleClick() {
+          console.log('data', this.data);
+          this.data += '0';
+        },
+        handleClick1() {
+          this.data_1 *= 2;
+        },
+        handleClick2() {
+          this.data_2 *= 2;
+        },
+        handleClick3() {
+          this.data_3.a *= 2;
+        }
+      },
+      data() {
+        this.data = 0;
+        return {
+          data_1: 1,
+          data_2: 2,
+          data_3: {a: 3},
+        }
+      },
+      computed: {
+        compute() {
+          return '***' + this.data + '***';
+        },
+        computed_1() {
+          return '***' + this.data_1 + '***';
+        },
+        computed_2: {
+          get() {
+            return '***' + this.data_2 + '***';
+          },
+          set() {
+            console.log('computed setter');
+          }
+        },
+        computed_3() {
+          return '***' + this.data_3.a + '***';
+        },
+      },
+      watch: {
+        data(val) {
+          console.log('watch data', val);
+        },
+        data_1(val) {
+          console.log('watch data_1', val)
+        },
+        data_2: {
+          immediate: true,
+          handler(val) {
+            console.log('watch data_2', val);
+          }
+        },
+        data_3: {
+          handler(val) {
+            console.log('watch data_3', val);
+          }
+        },
+        'data_3.a': {
+          handler(val) {
+            console.log('watch data_3.a', val);
+          }
+        },
+        computed_1 (val) {
+          console.log('watch computed_1', val);
+        }
+      }
+    });
+    app.$mount('#app');
+  </script>
+</body>
+
+</html>

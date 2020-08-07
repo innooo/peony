@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createComponent</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <template id="tmp">
+    <span>{{zzz}}</span>
+  </template>
+  <div id="app">
+    <my-component />
+  </div>
+  <script>
+    Vue.component('my-component', {
+      template: '#tmp',
+      inject: ['zzz']
+    })
+var app = new Vue({
+      el: '#app',
+      data () {
+        return {
+          msg: 1
+        }
+      },
+      provide: {
+        zzz: 'demo'
+      }
+    })
+
+  </script>
+</body>
+<script>
+  // 原理
+  // 父组件 initProvide -> 将provide挂载在vm._provide上面
+  // 子组件 initInject -> 向上逐层查找vm.$parent._provide，从而引用到父组件的provide
+  // 子组件在initInject时会observe(inject)，使其响应化
+</script>
+</html>

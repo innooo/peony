@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createComponent</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <p style="color: red;">color red</p>
+    <strong class="data">{{msg}}</strong>
+    <span @click="handleClick">点击</span>
+  </div>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          msg: 1,
+        }
+      },
+      methods: {
+        handleClick() {
+          this.msg += 1;
+        }
+      }
+    })
+  </script>
+</body>
+<script>
+  // render 函数
+  function anonymous() {
+    with (this) {
+      return _c(
+        'div', // tag
+        { attrs: { "id": "app" } }, // 属性
+        [ // children
+          _c(
+            'p',
+            { staticStyle: { "color": "red" } },
+            [_v("color red")]
+          ),
+          _v(" "),
+          _c('strong', { staticClass: "data" }, [_v(_s(msg))]),
+          _v(" "),
+          _c(
+            'span',
+            { on: { "click": handleClick } },
+            [_v("点击")]
+          )
+        ]
+      )
+    }
+  }
+  // vnode
+  const vnode = {
+    tag: "div", // tag名
+    data: { attrs: { id: "app" } }, // 包含属性/事件/静态style/class等
+    children: [ // 子节点结构一样，下面只展示主要内容
+      {
+        tag: "p",
+        data: { staticStyle: { color: "red" } },
+        children: [],
+      },
+      {
+        tag: "strong",
+        data: { staticClass: "data" },
+        children: []
+      },
+      {
+        tag: "span",
+        data: { on: { click: function() {} } },
+        children: []
+      }
+    ], // 此例子包含3个有效子节点：p strong span
+    text: undefined, // 文本内容
+    elm: undefined, // 对应的真实dom
+    ns: undefined,
+    context: vm,
+    fnContext: undefined,
+    fnOptions: undefined,
+    fnScopeId: undefined,
+    key: undefined,
+    componentOptions: undefined,
+    componentInstance: undefined,
+    parent: undefined, // 父节点
+    raw: false,
+    isStatic: false,
+    isRootInsert: true,
+    isComment: false,
+    isCloned: false,
+    isOnce: false,
+    asyncFactory: undefined,
+    asyncMeta: undefined,
+    isAsyncPlaceholder: false,
+  }
+</script>
+
+</html>

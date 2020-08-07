@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ast</title>
+  <script src="../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <input type="text" v-model="model" placeholder="model" />
+    <input type="text" v-bind="bind" placeholder="bind" />
+    <ul>
+      <li v-for="i in list" :key="i">{{i}}</li>
+    </ul>
+    <strong v-if="vif">if</strong>
+    <em v-show="show">show</em>
+    <p ref="ref">ref</p>
+    <button @click="handleClick">@click</button>
+  </div>
+</body>
+<script>
+  debugger
+  const app = new Vue({
+    el: '#app',
+    data: {
+      model: '', // v-model
+      bind: '', // v-bind
+      list: ['a', 'b', 'c'], // v-for
+      vif: true, // v-if
+      show: true, // v-show
+    },
+    methods: {
+      handleClick() {
+        console.log('click');
+      }
+    },
+  });
+</script>
+
+</html>

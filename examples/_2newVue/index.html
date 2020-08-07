@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createComponent</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <!-- <div id="app">
+    <p>{{obj.count}}</p>
+    <strong>{{txt}}</strong>
+    <button @click="handleClick">递增</button>
+  </div> -->
+  <div id="app1"></div>
+  <script>
+    // data、computed、watch响应式
+    // new Vue({
+    //   el: '#app',
+    //   data () {
+    //     return {
+    //       msg: 0
+    //     }
+    //   },
+    //   computed: {
+    //     txt () {
+    //       return this.msg * 2
+    //     }
+    //   },
+    //   watch: {
+    //     msg (v) {
+    //       console.log(v)
+    //     }
+    //   },
+    //   methods: {
+    //     handleClick () {
+    //       this.msg += 1
+    //     }
+    //   }
+    // })
+
+    // 非响应式
+    new Vue({
+      el: '#app1',
+      template: `
+      <div>
+        <span>array: {{items.join(',')}}</span> <br />
+        <!-- <em>obj.count: {{obj.count}}</em> <br />
+        <strong>computed: {{txt}}</strong> <br /> -->
+        <button @click="handleClick">直接修改数组项</button> <br />
+        <button @click="handleClick1">使用splice修改数组项</button> <br />
+        <!-- <button @click="handleClick2">修改obj.multiplier</button> <br />
+        <button @click="handleClick3">修改obj.count</button> <br /> -->
+      </div>
+      `,
+      data() {
+        return {
+          // msg: 'hello world',
+          items: ['a', 'b', 'c'],
+          // obj: {
+          //   count: 0,
+          // }
+        }
+      },
+      // computed: {
+      //   txt() {
+      //     return this.obj.multiplier ? this.obj.multiplier * this.obj.count : this.obj.count * 2
+      //   }
+      // },
+      methods: {
+        handleClick() {
+          this.items[0] = 'aa'
+          // this.items.length = 2
+        },
+        handleClick1() {
+          this.items.splice(0, 1, 'aa')
+        },
+        // handleClick2() {
+        //   // this.items[0] = 'aaa'
+        //   this.obj.multiplier = 3;
+        // },
+        // handleClick3() {
+        //   // this.items[0] = 'aaa'
+        //   this.obj.count = 3;
+        // },
+      }
+    })
+  </script>
+</body>
+
+</html>
