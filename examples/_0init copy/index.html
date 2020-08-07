@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createComponent</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script>
+    // 为什么每一个更新都要重新进行依赖收集
+    new Vue({
+      el: '#app',
+      template: `
+      <div>
+        <i v-if="flag">msg：{{msg}}</i>
+        <button @click="handleClick">修改msg</button>
+      </div>
+      `,
+      data() {
+        return {
+          flag: false,
+          msg: 'abc',
+        }
+      },
+      methods: {
+        handleClick() {
+          this.msg = 'efg';
+        },
+      }
+    })
+  </script>
+</body>
+
+</html>
